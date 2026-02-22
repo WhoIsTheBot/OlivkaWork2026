@@ -35,7 +35,7 @@ function Page() {
 
         try {
             // У вашій функції handleSend змініть fetch:
-            const response = await fetch("http://localhost:8000/api/v1/chat", {
+            const response = await fetch("https://olivkawork2026.onrender.com/api/v1/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include", // ОБО'ЯЗКОВО для передачі сесії/кук

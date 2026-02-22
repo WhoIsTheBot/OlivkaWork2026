@@ -52,7 +52,7 @@ function Page() {
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push("http://localhost:8000/login");
+      router.push("https://olivkawork2026.onrender.com/login");
     }
   }, [isAuthenticated, loading, router]);
 

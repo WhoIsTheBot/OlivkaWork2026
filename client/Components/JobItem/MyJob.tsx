@@ -71,7 +71,7 @@ function MyJob({ job }: JobProps) {
             if (isAuthenticated) {
               handleLike(job._id);
             } else {
-              router.push("http://localhost:8000/login");
+              router.push("https://olivkawork2026.onrender.com/login");
             }
           }}
         >

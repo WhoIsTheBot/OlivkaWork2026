@@ -100,14 +100,14 @@ function Header() {
             ) : (
               <div className="flex items-center gap-6">
                 <Link
-                  href={"http://localhost:8000/login"}
+                  href={"https://olivkawork2026.onrender.com/login"}
                   className="py-2 px-6 rounded-md border flex items-center gap-4 bg-[#166434] text-white border-[#166434] hover:bg-[#166434]/90 trasition-all duration-200 ease-in-out"
                 >
                   <LogIn className="w-4 h-4" />
                   Вхід
                 </Link>
                 <Link
-                  href={"http://localhost:8000/register"}
+                  href={"https://olivkawork2026.onrender.com/register"}
                   className="py-2 px-6 rounded-md border flex items-center gap-4 border-[#166434] text-[#166434] hover:bg-[#166434]/10 trasition-all duration-200 ease-in-out"
                 >
                   <UserPlus className="w-4 h-4" />
@@ -177,7 +177,7 @@ function Header() {
                 <button
                   onClick={() =>
                   (window.location.href =
-                    "http://localhost:8000/logout")
+                    "https://olivkawork2026.onrender.com/logout")
                   }
                   className="block w-full text-left px-3 py-2 rounded-md text-red-600"
                 >
@@ -187,14 +187,14 @@ function Header() {
             ) : (
               <>
                 <Link
-                  href="http://localhost:8000/login"
+                  href="https://olivkawork2026.onrender.com/login"
                   className="block px-3 py-2 rounded-md bg-[#166434] text-white text-center"
                 >
                   Увійти
                 </Link>
 
                 <Link
-                  href="http://localhost:8000/login"
+                  href="https://olivkawork2026.onrender.com/register"
                   className="block px-3 py-2 rounded-md border border-[#166434] text-[#166434] text-center"
                 >
                   Реєстрація

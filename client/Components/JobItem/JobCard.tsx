@@ -86,7 +86,7 @@ function JobCard({ job, activeJob }: JobProps) {
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) handleLike(job._id);
-              else router.push("http://localhost:8000/login");
+              else router.push("https://olivkawork2026.onrender.com/login");
             }}
           >
             <span className="text-xl leading-none">

@@ -94,7 +94,7 @@ export const GlobalContextProvider = ({ children }) => {
 // Додайте це всередину вашого GlobalContextProvider
 const changeUserRole = async (id, newRole) => {
   try {
-    // Переконуємося, що axios налаштований з baseURL: http://localhost:8000
+    // Переконуємося, що axios налаштований з baseURL: https://olivkawork2026.onrender.com
     const res = await api.patch(`/api/v1/users/${id}/role`, { role: newRole });
     
     setUsers((prevUsers) =>
@@ -116,7 +116,7 @@ const changeUserRole = async (id, newRole) => {
     setIsAuthenticated(false);
     setAuth0User(null);
     setUserProfile({});
-    window.location.href = "http://localhost:8000/logout";
+    window.location.href = "https://olivkawork2026.onrender.com/logout";
   };
 
   const resetJobForm = () => {

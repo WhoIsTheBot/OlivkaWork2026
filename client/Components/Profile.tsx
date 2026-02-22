@@ -21,7 +21,7 @@ function Profile() {
 
   const handleLogout = () => {
     // Редирект на бекенд /logout
-    window.location.href = "http://localhost:8000/logout";
+    window.location.href = "https://olivkawork2026.onrender.com/logout";
   };
 
   const getRoleButton = () => {
