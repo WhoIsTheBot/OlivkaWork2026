@@ -31,13 +31,15 @@ const config = {
   },
   */
   session: {
-    absoluteDuration: 30 * 24 * 60 * 60 * 1000, 
+    absoluteDuration: 30 * 24 * 60 * 60 * 1000,
     cookie: {
       secure: false, // Обов'язково false для http://localhost
       sameSite: "Lax",
     },
   },
 };
+
+const PORT = process.env.PORT || 8000;
 
 // --- Middleware ---
 app.use(
@@ -96,7 +98,7 @@ app.get("/register", (req, res) => {
 // --- Функція для динамічного завантаження роутів ---
 const registerRoutes = async () => {
   const routeFiles = fs.readdirSync("./routes");
-  
+
   for (const file of routeFiles) {
     // Завантажуємо тільки .js файли
     if (file.endsWith(".js")) {
@@ -118,11 +120,11 @@ const registerRoutes = async () => {
 const startServer = async () => {
   try {
     await connect(); // Підключення до БД
-    
+
     await registerRoutes(); // ЧЕКАЄМО завантаження роутів перед запуском
-    
-    app.listen(process.env.PORT, () => {
-      console.log(`Server is running on port ${process.env.PORT}`);
+
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
     console.log("Server error", error.message);
