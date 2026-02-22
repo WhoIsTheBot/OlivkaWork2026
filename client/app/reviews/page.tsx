@@ -7,12 +7,12 @@ import { useJobsContext } from "@/context/jobsContext";
 import ReviewCard from "@/Components/JobItem/ReviewCard";
 import { EnrichedJob } from "@/types/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  MessageSquareQuote, 
-  Inbox, 
-  Sparkles, 
-  BarChart3, 
-  Filter 
+import {
+    MessageSquareQuote,
+    Inbox,
+    Sparkles,
+    BarChart3,
+    Filter
 } from "lucide-react";
 import { Badge } from "@/Components/ui/badge";
 
@@ -21,14 +21,19 @@ export default function Page() {
     const jobsData = (userJobs || []) as EnrichedJob[];
 
     // Розрахунок статистики для дизайну
-    const totalReviews = jobsData.reduce((acc, job) =>  acc + (job.applicants?.length  || 0) + 0, 0);
+    // Розрахунок статистики: безпечно перевіряємо наявність масиву та його довжину
+    const totalReviews = jobsData.reduce((acc, job) => {
+        // Перевіряємо applicants як масив. Якщо це не масив, беремо 0.
+        const count = Array.isArray(job.applicants) ? job.applicants.length : 0;
+        return acc + count;
+    }, 0);
 
     if (loading) {
         return (
             <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
                 <Header />
                 <div className="flex-1 flex flex-col items-center justify-center">
-                    <motion.div 
+                    <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                         className="h-12 w-12 border-4 border-emerald-100 border-t-emerald-600 rounded-full"
@@ -44,11 +49,11 @@ export default function Page() {
     return (
         <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
             <Header />
-            
+
             <main className="flex-1 container mx-auto px-4 py-12">
                 {/* Hero Header Section */}
                 <div className="mb-12">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col md:flex-row md:items-center justify-between gap-6"
@@ -113,7 +118,7 @@ export default function Page() {
                     <div className="lg:col-span-9">
                         <AnimatePresence>
                             {jobsData.length === 0 ? (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="bg-white rounded-[3rem] border border-dashed border-slate-200 py-20 flex flex-col items-center justify-center text-center px-6"
@@ -127,7 +132,7 @@ export default function Page() {
                                     </p>
                                 </motion.div>
                             ) : (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     className="flex flex-col gap-6"
