@@ -20,8 +20,8 @@ interface ReviewCardProps {
 export default function ReviewCard({ job }: ReviewCardProps) {
   const [open, setOpen] = useState(false);
 
-  // 1. ВИПРАВЛЕННЯ: Безпечне отримання jobType (уникаємо 'unknown')
-  // Кастимо до string[], якщо TypeScript не бачить тип з EnrichedJob
+  // 1. ВИПРАВЛЕННЯ: Безпечне отримання jobType через Type Assertion
+  // Це каже TypeScript: "Повір мені, тут буде масив рядків"
   const jobTypes = (job.jobType as string[]) || [];
 
   // 2. ВИПРАВЛЕННЯ: Типізація аплікантів без any
@@ -36,7 +36,7 @@ export default function ReviewCard({ job }: ReviewCardProps) {
               {job.title}
             </h3>
             
-            {/* Рендеримо бейдж лише якщо є хоча б один тип роботи */}
+            {/* ВАЖЛИВО: Використовуємо jobTypes[0] замість job.jobType[0] */}
             {jobTypes.length > 0 && (
               <span className="bg-emerald-50 text-[#166434] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                 {jobTypes[0]}
@@ -44,11 +44,12 @@ export default function ReviewCard({ job }: ReviewCardProps) {
             )}
           </div>
           <p className="text-slate-400 text-sm font-medium">
-            Опубліковано: {new Date(job.createdAt).toLocaleDateString()} • {job.location}
+            Опубліковано: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Недавно"} • {job.location}
           </p>
         </div>
 
         <button
+          type="button"
           onClick={() => setOpen(!open)}
           className={`px-6 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${
             open
