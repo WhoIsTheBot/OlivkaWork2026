@@ -4,7 +4,6 @@ import Header from "@/Components/Header";
 import UserCard from "@/Components/JobItem/UserCard";
 import { useGlobalContext } from "@/context/globalContext";
 import React, { useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
 
 export interface UserType {
   _id: string;

@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface IUser {
   _id: string;
   name: string;
@@ -6,10 +8,10 @@ export interface IUser {
 }
 
 export interface EnrichedJob {
-  jobType: any;
+  jobType: unknown;
   location: ReactNode;
-  applicantsDetails: any;
-  applicants: any;
+  applicantsDetails: unknown;
+  applicants: unknown;
   _id: string;
   title: string;
   createdAt: string;

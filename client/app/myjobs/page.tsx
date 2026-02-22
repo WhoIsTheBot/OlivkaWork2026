@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -16,37 +16,59 @@ import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
 import { formatDates } from "@/utils/fotmatDates";
 
+// --- Інтерфейси для типізації ---
+interface TabButtonProps {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  icon: React.ReactNode;
+}
+
+interface ActionBtnProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  color?: string;
+}
+
+interface EmptyStateProps {
+  tab: "posts" | "likes";
+}
+
 function Page() {
   const { userJobs, jobs, deleteJob } = useJobsContext();
   const { isAuthenticated, loading, userProfile } = useGlobalContext();
   const router = useRouter();
 
-  // "posts" - мої створені вакансії, "likes" - збережені
-  const [activeTab, setActiveTab] = React.useState<"posts" | "likes">("likes");
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [tabState, setTabState] = useState<"posts" | "likes">("likes");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const userId = userProfile?._id;
   const isPrivileged = userProfile?.role === "recruiter" || userProfile?.role === "admin";
+
+  // ВИПРАВЛЕННЯ КАСКАДУ: Обчислюємо реальну активну вкладку під час рендеру
+  // Якщо користувач не адмін/рекрутер, він ЗАВЖДИ бачить "likes", незалежно від tabState
+  const activeTab = isPrivileged ? tabState : "likes";
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push("http://localhost:8000/login");
     }
-    // Якщо користувач звичайний - він бачить тільки "likes"
-    if (!isPrivileged) setActiveTab("likes");
-  }, [isAuthenticated, loading, isPrivileged, router]);
+  }, [isAuthenticated, loading, router]);
 
-  // Фільтрація контенту
   const displayedJobs = useMemo(() => {
-    let filtered = [];
+    let filtered: Job[] = [];
+    
     if (activeTab === "posts") {
-      filtered = userJobs; // Вакансії, створені користувачем
+      filtered = userJobs || [];
     } else {
-      filtered = jobs.filter((job: Job) => job.likes.includes(userId)); // Вподобані
+      filtered = jobs.filter((job: Job) => userId && job.likes?.includes(userId));
     }
 
     if (searchQuery) {
-      filtered = filtered.filter(j => j.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      filtered = filtered.filter((j: Job) => 
+        j.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
     return filtered;
   }, [activeTab, userJobs, jobs, userId, searchQuery]);
@@ -61,7 +83,7 @@ function Page() {
         <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <Badge className="mb-4 bg-emerald-100 text-[#166434] border-none px-4 py-1">
-              {userProfile?.role?.toUpperCase()} PORTAL
+              {(userProfile?.role || "USER").toUpperCase()} PORTAL
             </Badge>
             <h1 className="text-4xl font-black text-slate-900 tracking-tight">
               {activeTab === "posts" ? "Мої публікації" : "Мої вподобання"}
@@ -79,19 +101,18 @@ function Page() {
           )}
         </header>
 
-        {/* Панель керування */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-2 rounded-[2rem] border border-slate-100 shadow-sm">
           <div className="flex items-center gap-1 w-full md:w-auto">
             <TabButton 
               active={activeTab === "likes"} 
-              onClick={() => setActiveTab("likes")}
+              onClick={() => setTabState("likes")}
               icon={<Heart size={18} />}
               label="Вподобання" 
             />
             {isPrivileged && (
               <TabButton 
                 active={activeTab === "posts"} 
-                onClick={() => setActiveTab("posts")}
+                onClick={() => setTabState("posts")}
                 icon={<LayoutGrid size={18} />}
                 label="Мої пости" 
               />
@@ -110,7 +131,6 @@ function Page() {
           </div>
         </div>
 
-        {/* Список вакансій */}
         <div className="grid grid-cols-1 gap-4">
           <AnimatePresence mode="popLayout">
             {displayedJobs.length > 0 ? (
@@ -134,7 +154,6 @@ function Page() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* Кнопки керування */}
                     <ActionBtn 
                       icon={<Eye size={16} />} 
                       label="Перегляд" 
@@ -154,7 +173,7 @@ function Page() {
                           label="Видалити" 
                           color="text-red-600"
                           onClick={() => {
-                            if(confirm("Видалити цю вакансію?")) deleteJob(job._id);
+                            if(window.confirm("Видалити цю вакансію?")) deleteJob(job._id);
                           }} 
                         />
                       </>
@@ -163,7 +182,7 @@ function Page() {
                 </motion.div>
               ))
             ) : (
-              <EmptyState role={userProfile?.role} tab={activeTab} />
+              <EmptyState tab={activeTab} />
             )}
           </AnimatePresence>
         </div>
@@ -173,8 +192,9 @@ function Page() {
   );
 }
 
-// Допоміжні компоненти
-function TabButton({ active, onClick, label, icon }: any) {
+// --- Допоміжні компоненти без any ---
+
+function TabButton({ active, onClick, label, icon }: TabButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -184,7 +204,7 @@ function TabButton({ active, onClick, label, icon }: any) {
       {active && (
         <motion.div 
           layoutId="activeTab" 
-          className="absolute inset-0 bg-[#166434] rounded-2xl -z-0"
+          className="absolute inset-0 bg-[#166434] rounded-2xl z-0"
         />
       )}
       <span className="relative z-10">{icon}</span>
@@ -193,7 +213,7 @@ function TabButton({ active, onClick, label, icon }: any) {
   );
 }
 
-function ActionBtn({ icon, label, onClick, color = "text-slate-600" }: any) {
+function ActionBtn({ icon, label, onClick, color = "text-slate-600" }: ActionBtnProps) {
   return (
     <Button 
       variant="ghost" 
@@ -206,7 +226,7 @@ function ActionBtn({ icon, label, onClick, color = "text-slate-600" }: any) {
   );
 }
 
-function EmptyState({ role, tab }: any) {
+function EmptyState({ tab }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-24 bg-white rounded-[2rem] border border-dashed border-slate-200">
       <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">

@@ -107,7 +107,7 @@ function Page() {
                 {publicProfile.experience && publicProfile.experience.length > 0 ? (
                   publicProfile.experience.map((exp: IExperience, index: number) => (
                     <div key={index} className="relative pl-6 border-l-2 border-green-100">
-                      <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-[7px] top-1.5 shadow-sm shadow-green-200"></div>
+                      <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-1.75 top-1.5 shadow-sm shadow-green-200"></div>
                       <h4 className="font-bold text-gray-900 text-lg">{exp.company}</h4>
                       <p className="text-green-600 font-semibold">{exp.position}</p>
                       <p className="text-gray-500 mt-2 text-sm leading-relaxed">{exp.description}</p>
@@ -146,7 +146,7 @@ function Page() {
               <div className="space-y-4">
                 <div className="flex flex-col">
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Електронна пошта</span>
-                  <a href={`mailto:${publicProfile.email}`} className="text-gray-700 font-medium hover:text-green-600 transition-colors break-words">
+                  <a href={`mailto:${publicProfile.email}`} className="text-gray-700 font-medium hover:text-green-600 transition-colors wrap-break-word">
                     {publicProfile.email || "Не вказано"}
                   </a>
                 </div>

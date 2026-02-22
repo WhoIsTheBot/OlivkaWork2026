@@ -2,7 +2,7 @@
 import { useGlobalContext } from "@/context/globalContext";
 import { useJobsContext } from "@/context/jobsContext";
 import { Job } from "@/types/types";
-import { Calendar, Clock, MapPin, ChevronRight } from "lucide-react";
+import { Clock, MapPin, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -64,7 +64,7 @@ function JobCard({ job, activeJob }: JobProps) {
       <div className="flex-1 flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <div className="flex gap-3 items-center">
-            <div className="w-12 h-12 relative bg-gray-50 border border-gray-100 rounded-xl overflow-hidden p-1 flex-shrink-0">
+            <div className="w-12 h-12 relative bg-gray-50 border border-gray-100 rounded-xl overflow-hidden p-1 shrink-0">
               <Image
                 src={profilePicture || "/user.png"}
                 alt={name || "User"}
@@ -76,7 +76,7 @@ function JobCard({ job, activeJob }: JobProps) {
               <h4 className="font-bold text-[15px] text-gray-900 leading-tight group-hover:text-[#166434] transition-colors line-clamp-1">
                 {title}
               </h4>
-              <span className="text-xs text-gray-500 font-medium truncate max-w-[150px]">{name}</span>
+              <span className="text-xs text-gray-500 font-medium truncate max-w-37.5">{name}</span>
             </div>
           </div>
 
@@ -96,7 +96,7 @@ function JobCard({ job, activeJob }: JobProps) {
         </div>
 
         {/* Типи зайнятості */}
-        <div className="flex flex-wrap gap-1.5 min-h-[26px]">
+        <div className="flex flex-wrap gap-1.5 min-h-6.5">
           {jobType.slice(0, 2).map((type, index) => (
             <span
               key={index}
@@ -114,12 +114,12 @@ function JobCard({ job, activeJob }: JobProps) {
             components={{
               // Перетворюємо всі блочні елементи на інлайнові (span), 
               // щоб line-clamp міг коректно обрізати текст
-              p: ({ node, ...props }) => <span {...props} />,
-              h1: ({ node, ...props }) => <span {...props} />,
-              h2: ({ node, ...props }) => <span {...props} />,
-              h3: ({ node, ...props }) => <span {...props} />,
-              li: ({ node, ...props }) => <span {...props} className="ml-1" />,
-              ul: ({ node, ...props }) => <span {...props} />,
+              p: ({ ...props }) => <span {...props} />,
+              h1: ({ ...props }) => <span {...props} />,
+              h2: ({ ...props }) => <span {...props} />,
+              h3: ({ ...props }) => <span {...props} />,
+              li: ({ ...props }) => <span {...props} className="ml-1" />,
+              ul: ({ ...props }) => <span {...props} />,
             }}
           >
             {description}
@@ -134,7 +134,7 @@ function JobCard({ job, activeJob }: JobProps) {
           {location && (
             <div className="flex items-center gap-1">
               <MapPin size={13} />
-              <span className="truncate max-w-[100px]">{location}</span>
+              <span className="truncate max-w-25">{location}</span>
             </div>
           )}
         </div>

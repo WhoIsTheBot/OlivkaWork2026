@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useJobsContext } from "@/context/jobsContext";
 import Header from "@/Components/Header";
@@ -18,11 +18,24 @@ interface IJobFormData {
   skills: string[];
 }
 
+interface IJob {
+  _id: string;
+  title: string;
+  location: string;
+  salary: number;
+  salaryType: "Year" | "Month" | "Hour";
+  negotiable: boolean;
+  jobType: string[];
+  description: string;
+  tags: string[];
+  skills: string[];
+}
+
 export default function EditJobPage() {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
-  
+
   const context = useJobsContext();
   const { getJobById, updateJob, loading: contextLoading, jobs = [] } = context || {};
 
@@ -43,9 +56,12 @@ export default function EditJobPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 1. Швидке отримання з кешу (без очікування API)
+  // 1. Швидке отримання з кешу
   useEffect(() => {
     if (id && jobs.length > 0 && !formData.title) {
-      const cached = jobs.find((j: any) => j._id === id);
+      // Change (j: any) to (j: IJob)
+      const cached = jobs.find((j: IJob) => j._id === id);
+
       if (cached) {
         setFormData({
           title: cached.title || "",
@@ -69,7 +85,7 @@ export default function EditJobPage() {
 
     const loadData = async () => {
       if (!id || !getJobById) return;
-      
+
       try {
         const job = await getJobById(id);
         if (job && isMounted) {
@@ -134,7 +150,7 @@ export default function EditJobPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!updateJob || !id) return;
-    
+
     setIsSubmitting(true);
     try {
       await updateJob(id, { ...formData, salary: Number(formData.salary) });
@@ -175,12 +191,12 @@ export default function EditJobPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700">Назва посади</label>
-                <input name="title" className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" 
+                <input name="title" className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
                   value={formData.title} onChange={handleChange} required />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700">Локація</label>
-                <input name="location" className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" 
+                <input name="location" className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
                   value={formData.location} onChange={handleChange} />
               </div>
             </div>
@@ -189,12 +205,12 @@ export default function EditJobPage() {
             <div className="bg-green-50/50 p-6 rounded-2xl border border-green-100 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700">Зарплата</label>
-                <input name="salary" type="number" className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" 
+                <input name="salary" type="number" className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
                   value={formData.salary} onChange={handleChange} required />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700">Період виплати</label>
-                <select name="salaryType" className="w-full border border-gray-200 p-3 rounded-xl bg-white focus:ring-2 focus:ring-green-500 outline-none transition" 
+                <select name="salaryType" className="w-full border border-gray-200 p-3 rounded-xl bg-white focus:ring-2 focus:ring-green-500 outline-none transition"
                   value={formData.salaryType} onChange={handleChange}>
                   <option value="Year">На рік</option>
                   <option value="Month">На місяць</option>
@@ -202,7 +218,7 @@ export default function EditJobPage() {
                 </select>
               </div>
               <div className="flex items-center gap-3 md:pt-8">
-                <input name="negotiable" type="checkbox" id="neg" className="w-5 h-5 accent-green-600 rounded cursor-pointer" 
+                <input name="negotiable" type="checkbox" id="neg" className="w-5 h-5 accent-green-600 rounded cursor-pointer"
                   checked={formData.negotiable} onChange={handleChange} />
                 <label htmlFor="neg" className="text-sm font-bold text-gray-700 cursor-pointer">Торг можливий</label>
               </div>
@@ -214,9 +230,8 @@ export default function EditJobPage() {
               <div className="flex flex-wrap gap-2">
                 {["Full-time", "Part-time", "Contract", "Internship", "Remote"].map((type) => (
                   <button key={type} type="button" onClick={() => handleJobTypeToggle(type)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 ${
-                      formData.jobType.includes(type) ? "bg-green-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}>
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 ${formData.jobType.includes(type) ? "bg-green-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}>
                     {type}
                   </button>
                 ))}
@@ -226,7 +241,7 @@ export default function EditJobPage() {
             {/* Опис */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700">Опис вакансії</label>
-              <textarea name="description" className="w-full border border-gray-200 p-4 rounded-2xl h-48 focus:ring-2 focus:ring-green-500 outline-none resize-none transition" 
+              <textarea name="description" className="w-full border border-gray-200 p-4 rounded-2xl h-48 focus:ring-2 focus:ring-green-500 outline-none resize-none transition"
                 value={formData.description} onChange={handleChange} required />
             </div>
 
@@ -234,7 +249,7 @@ export default function EditJobPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3">
                 <label className="text-sm font-bold text-gray-700">Навички (Enter)</label>
-                <input className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" 
+                <input className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
                   placeholder="Додати навичку..." onKeyDown={(e) => handleArrayInput(e, "skills")} />
                 <div className="flex flex-wrap gap-2">
                   {formData.skills.map((s, i) => (
@@ -246,7 +261,7 @@ export default function EditJobPage() {
               </div>
               <div className="space-y-3">
                 <label className="text-sm font-bold text-gray-700">Теги (Enter)</label>
-                <input className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" 
+                <input className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
                   placeholder="Додати тег..." onKeyDown={(e) => handleArrayInput(e, "tags")} />
                 <div className="flex flex-wrap gap-2">
                   {formData.tags.map((t, i) => (
@@ -260,16 +275,16 @@ export default function EditJobPage() {
 
             {/* Кнопки дії */}
             <div className="pt-6 flex flex-col md:flex-row gap-4">
-              <button 
-                type="submit" 
-                disabled={isSubmitting || contextLoading} 
+              <button
+                type="submit"
+                disabled={isSubmitting || contextLoading}
                 className="flex-1 bg-[#166434] text-white py-4 rounded-2xl font-bold text-lg hover:bg-opacity-90 transition-all shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Збереження..." : "Зберегти зміни"}
               </button>
-              <button 
-                type="button" 
-                onClick={() => router.back()} 
+              <button
+                type="button"
+                onClick={() => router.back()}
                 className="px-8 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors"
               >
                 Скасувати

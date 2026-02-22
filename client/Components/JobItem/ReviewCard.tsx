@@ -5,6 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { EnrichedJob } from "@/types/types";
 
+// Додаємо інтерфейс для апліканта (якщо його немає в types.ts)
+interface Applicant {
+  _id: string;
+  auth0Id?: string;
+  name?: string;
+  profilePicture?: string;
+}
+
 interface ReviewCardProps {
   job: EnrichedJob;
 }
@@ -12,9 +20,8 @@ interface ReviewCardProps {
 export default function ReviewCard({ job }: ReviewCardProps) {
   const [open, setOpen] = useState(false);
 
-  // Використовуємо поле applicants для відображення тих, хто відгукнувся
-  // Якщо ваш бекенд повертає масив об'єктів користувачів у job.applicants:
-  const candidateList = job.applicantsDetails || job.applicants || [];
+  // Кастимо до масиву Applicant, щоб TypeScript розумів структуру об'єктів
+  const candidateList = (job.applicantsDetails || job.applicants || []) as Applicant[];
 
   return (
     <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 transition-all hover:shadow-lg hover:border-emerald-100 group">
@@ -60,9 +67,9 @@ export default function ReviewCard({ job }: ReviewCardProps) {
                 <p className="text-slate-500 italic font-medium">На цю вакансію ще немає відгуків</p>
               </div>
             ) : (
-              candidateList.map((user: any) => (
+              candidateList.map((user) => (
                 <Link
-                  key={user._id || user}
+                  key={user._id}
                   href={`/user/${user.auth0Id || user._id}`}
                   className="flex items-center gap-4 p-4 rounded-[1.5rem] bg-slate-50/50 hover:bg-white transition-all border border-transparent hover:border-emerald-100 hover:shadow-sm group/item"
                 >

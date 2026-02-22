@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { Settings, LogOut, BookmarkCheck, Plus, User, Star } from "lucide-react";
+import { LogOut, BookmarkCheck, Plus, User, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";

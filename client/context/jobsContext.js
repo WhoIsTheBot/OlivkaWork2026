@@ -109,6 +109,7 @@ const updateJob = async (jobId, jobData) => {
               auth0Id: userRes.data.auth0Id,
             };
             return userCache[id];
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           } catch (err) {
             console.error(`Помилка отримання юзера ${id}`);
             return null;
