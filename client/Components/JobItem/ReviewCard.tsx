@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { EnrichedJob } from "@/types/types";
 
-// Додаємо інтерфейс для апліканта (якщо його немає в types.ts)
+// --- Інтерфейси ---
 interface Applicant {
   _id: string;
   auth0Id?: string;
@@ -20,7 +20,11 @@ interface ReviewCardProps {
 export default function ReviewCard({ job }: ReviewCardProps) {
   const [open, setOpen] = useState(false);
 
-  // Кастимо до масиву Applicant, щоб TypeScript розумів структуру об'єктів
+  // 1. ВИПРАВЛЕННЯ: Безпечне отримання jobType (уникаємо 'unknown')
+  // Кастимо до string[], якщо TypeScript не бачить тип з EnrichedJob
+  const jobTypes = (job.jobType as string[]) || [];
+
+  // 2. ВИПРАВЛЕННЯ: Типізація аплікантів без any
   const candidateList = (job.applicantsDetails || job.applicants || []) as Applicant[];
 
   return (
@@ -31,9 +35,13 @@ export default function ReviewCard({ job }: ReviewCardProps) {
             <h3 className="text-2xl font-black text-slate-800 tracking-tight group-hover:text-[#166434] transition-colors">
               {job.title}
             </h3>
-            <span className="bg-emerald-50 text-[#166434] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-              {job.jobType[0]}
-            </span>
+            
+            {/* Рендеримо бейдж лише якщо є хоча б один тип роботи */}
+            {jobTypes.length > 0 && (
+              <span className="bg-emerald-50 text-[#166434] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                {jobTypes[0]}
+              </span>
+            )}
           </div>
           <p className="text-slate-400 text-sm font-medium">
             Опубліковано: {new Date(job.createdAt).toLocaleDateString()} • {job.location}
