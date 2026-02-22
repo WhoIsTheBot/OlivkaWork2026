@@ -1,6 +1,6 @@
+import "dotenv/config"; // МИТТЄВЕ ЗАВАНТАЖЕННЯ ENV
 import express from "express";
 import { auth } from "express-openid-connect";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import connect from "./db/connect.js";
@@ -8,7 +8,11 @@ import asyncHandler from "express-async-handler";
 import fs from "fs";
 import User from "./models/UserModel.js";
 
-dotenv.config();
+// Перевірка змінних в логах Render (видалити після налагодження)
+console.log("--- ENV CHECK ---");
+console.log("BASE_URL:", process.env.BASE_URL ? "Loaded" : "MISSING");
+console.log("SECRET:", process.env.SECRET ? "Loaded" : "MISSING");
+console.log("-----------------");
 
 const app = express();
 
@@ -25,15 +29,12 @@ const config = {
     logout: "/logout",
     login: "/login",
   },
-  // ВИДАЛІТЬ АБО ЗАКОМЕНТУЙТЕ ЦЕЙ БЛОК:
-  /* authorizationParams: {
-    response_mode: 'query', 
-  },
-  */
   session: {
     absoluteDuration: 30 * 24 * 60 * 60 * 1000,
     cookie: {
-      secure: false, // Обов'язково false для http://localhost
+      // На Render завжди HTTPS, тому для безпеки краще true
+      // Якщо будуть проблеми з сесією на Render, змініть на process.env.NODE_ENV === "production"
+      secure: true, 
       sameSite: "Lax",
     },
   },
@@ -41,7 +42,6 @@ const config = {
 
 const PORT = process.env.PORT || 8000;
 
-// --- Middleware ---
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -55,9 +55,14 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(auth(config));
 
-// --- Вспоміжна функція для БД ---
+// Ініціалізація Auth0
+if (!config.baseURL || !config.secret) {
+  console.error("CRITICAL ERROR: Auth0 config missing baseURL or secret!");
+} else {
+  app.use(auth(config));
+}
+
 const enusureUserInDB = async (user) => {
   try {
     const existingUser = await User.findOne({ auth0Id: user.sub });
@@ -77,9 +82,8 @@ const enusureUserInDB = async (user) => {
   }
 };
 
-// --- Основні маршрути ---
 app.get("/", asyncHandler(async (req, res) => {
-  if (req.oidc.isAuthenticated()) {
+  if (req.oidc?.isAuthenticated()) {
     await enusureUserInDB(req.oidc.user);
     return res.redirect(process.env.CLIENT_URL);
   } else {
@@ -95,17 +99,13 @@ app.get("/register", (req, res) => {
   });
 });
 
-// --- Функція для динамічного завантаження роутів ---
 const registerRoutes = async () => {
   const routeFiles = fs.readdirSync("./routes");
-
   for (const file of routeFiles) {
-    // Завантажуємо тільки .js файли
     if (file.endsWith(".js")) {
       try {
         const route = await import(`./routes/${file}`);
-        // Перевірка, чи файл дійсно експортує роутер
-        if (route.default && typeof route.default === 'function') {
+        if (route.default) {
           app.use("/api/v1/", route.default);
           console.log(`Route loaded: ${file}`);
         }
@@ -116,13 +116,11 @@ const registerRoutes = async () => {
   }
 };
 
-// --- Запуск сервера ---
 const startServer = async () => {
   try {
-    await connect(); // Підключення до БД
-
-    await registerRoutes(); // ЧЕКАЄМО завантаження роутів перед запуском
-
+    await connect();
+    await registerRoutes();
+    // 0.0.0.0 обов'язково для Render
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server is running on port ${PORT}`);
     });
