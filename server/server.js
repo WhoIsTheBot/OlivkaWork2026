@@ -38,8 +38,8 @@ const PORT = process.env.PORT || 8000;
 // --- Middleware ---
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // Переконайся, що в Render це: https://olivka-work2026.vercel.app
-    credentials: true, // Дозволяє передачу куків сесії
+    origin: "https://olivka-work2026.vercel.app", 
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
