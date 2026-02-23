@@ -81,10 +81,15 @@ const enusureUserInDB = async (user) => {
 // --- Основні маршрути ---
 app.get("/", asyncHandler(async (req, res) => {
   if (req.oidc.isAuthenticated()) {
+    // Користувач увійшов — створюємо/перевіряємо в БД
     await enusureUserInDB(req.oidc.user);
-    return res.redirect(process.env.CLIENT_URL);
+    
+    // ПЕРЕНАПРАВЛЯЄМО НА VERCEL
+    // Переконайся, що в Render додана змінна CLIENT_URL=https://olivka-work2026.vercel.app
+    return res.redirect(process.env.CLIENT_URL || 'https://olivka-work2026.vercel.app');
   } else {
-    return res.send("Logged out");
+    // Якщо не залогінений, теж кидаємо на фронтенд
+    return res.redirect(process.env.CLIENT_URL || 'https://olivka-work2026.vercel.app');
   }
 }));
 
