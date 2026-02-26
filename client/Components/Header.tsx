@@ -193,7 +193,7 @@ function Header() {
                 </Link>
 
                 <Link
-                  href="https://olivkawork2026.onrender.com/register"
+                  href="https://olivkawork2026.onrender.com/login"
                   className="block px-3 py-2 rounded-md border border-[#166434] text-[#166434] text-center"
                 >
                   Реєстрація
