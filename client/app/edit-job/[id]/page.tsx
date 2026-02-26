@@ -228,7 +228,7 @@ export default function EditJobPage() {
             <div className="space-y-3">
               <label className="text-sm font-bold text-gray-700">Тип зайнятості</label>
               <div className="flex flex-wrap gap-2">
-                {["Full-time", "Part-time", "Contract", "Internship", "Remote"].map((type) => (
+                {["Повна зайнятість", "Часткова зайнятість", "Контракт", "Стажування", "Тимчасова"].map((type) => (
                   <button key={type} type="button" onClick={() => handleJobTypeToggle(type)}
                     className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 ${formData.jobType.includes(type) ? "bg-green-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                       }`}>

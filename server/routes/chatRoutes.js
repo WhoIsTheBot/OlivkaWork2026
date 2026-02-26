@@ -20,7 +20,7 @@ router.post("/chat", asyncHandler(async (req, res) => {
     // 2. Отримуємо вакансії
     const jobs = await Job.find().limit(20);
 
-    const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+    const clientUrl = process.env.CLIENT_URL || "https://olivka-work2026.vercel.app";
 
     // Оновлюємо формування списку вакансій:
     const jobsList = jobs.map(j => {
@@ -30,7 +30,7 @@ router.post("/chat", asyncHandler(async (req, res) => {
 
     // 3. Формуємо системну інструкцію
     const systemInstruction = `
-        Ти — OlivaWork AI. Твоє завдання: аналізувати профіль користувача та пропонувати найкращі вакансії.
+        Ти — OliveWork AI. Твоє завдання: аналізувати профіль користувача та пропонувати найкращі вакансії.
         
         ПРОФІЛЬ КОРИСТУВАЧА:
         - Ім'я: ${userData?.name || "Гість"}
@@ -48,7 +48,7 @@ router.post("/chat", asyncHandler(async (req, res) => {
         - Якщо є збіг, виділи його: "Ця вакансія підходить, бо ви знаєте **${userData?.skills?.[0] || 'необхідні технології'}**".
         - Коли пропонуєш вакансію, ОБОВ'ЯЗКОВО оформлюй назву вакансії як клікабельне посилання, використовуючи формат Markdown: [Назва вакансії](URL).
         - НЕ ПИШИ текстовий ID (наприклад, 699871...), використовуй тільки посилання.
-        - Приклад: "Вас може зацікавити вакансія [Frontend Developer](http://localhost:3000/job/123)".
+        - Приклад: "Вас може зацікавити вакансія [Frontend Developer](https://olivka-work2026.vercel.app/job/123)".
 
         `;
 
@@ -61,7 +61,7 @@ router.post("/chat", asyncHandler(async (req, res) => {
         const chat = model.startChat({
             history: [
                 { role: "user", parts: [{ text: systemInstruction }] },
-                { role: "model", parts: [{ text: "Привіт! Я OlivaWork AI. Я проаналізував ваш профіль та базу вакансій. Чим можу допомогти?" }] },
+                { role: "model", parts: [{ text: "Привіт! Я OliveWork AI. Я проаналізував ваш профіль та базу вакансій. Чим можу допомогти?" }] },
                 // Перетворюємо історію з фронтенду у формат Gemini
                 ...history.map(msg => ({
                     role: msg.role === "assistant" ? "model" : "user",

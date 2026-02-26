@@ -9,7 +9,7 @@ import { ScrollArea } from "@/Components/ui/scroll-area";
 
 function Page() {
     const [messages, setMessages] = useState([
-        { role: "assistant", content: "Привіт! Я твій AI помічник **OlivaWork**. Чим можу допомогти з пошуком роботи сьогодні?" }
+        { role: "assistant", content: "Привіт! Я твій AI помічник **OliveWork**. Чим можу допомогти з пошуком роботи сьогодні?" }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -110,7 +110,7 @@ function Page() {
                                 <Bot size={28} />
                             </div>
                             <div>
-                                <h2 className="font-bold text-lg text-slate-800">OlivaWork AI</h2>
+                                <h2 className="font-bold text-lg text-slate-800">OliveWork AI</h2>
                                 <div className="flex items-center gap-1.5">
                                     <span className={`w-2 h-2 rounded-full ${isLoading ? 'bg-orange-400 animate-pulse' : 'bg-emerald-500'}`}></span>
                                     <span className="text-xs font-medium text-slate-500 uppercase tracking-tight">
@@ -209,7 +209,7 @@ function Page() {
                         <div className="flex items-center justify-center gap-2 mt-4">
                             <Sparkles size={12} className="text-emerald-500" />
                             <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
-                                Потужність Gemini 1.5 Flash • OlivaWork 2026
+                                Потужність Gemini 1.5 Flash • OliveWork 2026
                             </p>
                         </div>
                     </div>

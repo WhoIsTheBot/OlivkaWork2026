@@ -23,15 +23,17 @@ export const JobsContextProvider = ({ children }) => {
   });
 
   const [filters, setFilters] = useState({
-    fullTime: false,
-    partTime: false,
-    internship: false,
-    contract: false,
-    fullStack: false,
-    backend: false,
-    devOps: false,
-    uiux: false,
-  });
+  fullTime: false,
+  partTime: false,
+  contract: false,
+  internship: false,
+  temporary: false, // Додано новий тип
+  fullStack: false,
+  backend: false,
+  devOps: false,
+  uiux: false,
+});
+
 
   const [minSalary, setMinSalary] = useState(900);
   const [maxSalary, setMaxSalary] = useState(120000);

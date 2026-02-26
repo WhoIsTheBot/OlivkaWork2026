@@ -24,7 +24,6 @@ function Header() {
       case "jobseeker":
         return (
           <Link href="/myProfile" className="bg-[#166434] text-white px-5 py-2 rounded-full flex items-center gap-2">
-            <Plus className="w-4 h-4" />
             Мій профіль
           </Link>
         );

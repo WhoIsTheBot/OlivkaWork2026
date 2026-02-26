@@ -93,7 +93,7 @@ function Page() {
 
           {isPrivileged && (
             <Button 
-              onClick={() => router.push("/post-job")}
+              onClick={() => router.push("/createJob")}
               className="bg-[#166434] hover:bg-[#114d28] text-white rounded-2xl px-6 py-6 h-auto font-bold shadow-lg flex gap-2"
             >
               <Plus size={20} /> Створити вакансію

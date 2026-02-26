@@ -83,7 +83,7 @@ function Page() {
   const {
     title, location, description, salary,
     createdBy, applicants, jobType,
-    createdAt, salaryType, negotiable, tags,
+    createdAt, salaryType, negotiable, tags, skills
   } = job;
 
   // 3. Обробники подій
@@ -101,6 +101,29 @@ function Page() {
     applyToJob(job._id);
     toast.success("Заявку надіслано!");
   };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: job.title,
+      text: `Переглянь цю вакансію: ${job.title} у ${job.location}`,
+      url: window.location.href, // Бере поточне посилання на сторінку
+    };
+
+    try {
+      // Перевіряємо, чи підтримує браузер Web Share API
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Якщо не підтримує (наприклад, старі ПК), копіюємо в буфер обміну
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Посилання скопійовано в буфер обміну!");
+      }
+    } catch (err) {
+      console.error("Помилка поширення:", err);
+    }
+  };
+
+  
 
   return (
     <main className="bg-[#F8FAFC] min-h-screen pb-20">
@@ -139,14 +162,27 @@ function Page() {
               </div>
             </div>
 
-            <div className="bg-linear-to-br from-[#166434] to-[#0d3d1f] p-6 rounded-[2rem] text-white shadow-xl shadow-emerald-900/10">
-              <h4 className="font-bold mb-2">Шукаєте більше?</h4>
-              <p className="text-xs text-emerald-100/70 leading-relaxed mb-4">
-                Налаштуйте сповіщення, щоб першими дізнаватися про нові вакансії.
-              </p>
-              <button className="w-full py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-xs font-bold transition-all">
-                Налаштувати
-              </button>
+            <div className="bg-linear-to-br from-[#166434] to-[#0d3d1f] p-6 rounded-[2rem] text-white shadow-xl shadow-emerald-900/10 relative overflow-hidden group">
+              {/* Декоративний елемент на фоні */}
+              <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-colors" />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <h4 className="font-bold">Шукаєте більше?</h4>
+                  <span className="text-[10px] bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-400/30 font-black uppercase tracking-wider">
+                    Скоро
+                  </span>
+                </div>
+
+                <p className="text-xs text-emerald-100/70 leading-relaxed mb-4">
+                  Ми працюємо над системою сповіщень, щоб ви першими дізнавалися про нові вакансії.
+                </p>
+
+                <div className="flex items-center gap-2 text-[11px] font-bold text-emerald-200/50 bg-white/5 p-3 rounded-xl border border-white/5">
+                  <Clock size={14} className="animate-pulse" />
+                  Функція у розробці...
+                </div>
+              </div>
             </div>
           </div>
         </aside>
@@ -210,10 +246,14 @@ function Page() {
                   <div className="h-px flex-1 bg-slate-100"></div>
                 </div>
 
-                {/* ЗАМІНІТЬ СТАРИЙ DIV НА ЦЕЙ */}
-                <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed text-lg prose-headings:text-slate-900 prose-headings:font-black prose-li:list-disc">
-                  <ReactMarkdown>{description}</ReactMarkdown>
-                </div>
+                <div
+                  className="prose prose-slate max-w-none text-slate-600 leading-relaxed text-lg 
+               prose-headings:text-slate-900 prose-headings:font-black 
+               prose-li:list-disc 
+               wrap-break-word overflow-hidden
+               [&_span]:bg-transparent! [&_span]:color-inherit!"
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
               </div>
             </div>
           </motion.div>
@@ -251,16 +291,37 @@ function Page() {
               </div>
             </motion.div>
 
+            {/* БЛОК НАВИЧОК (Skills) */}
+            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100">
+              <h3 className="font-black text-slate-900 mb-6 flex items-center gap-2">
+                <Sparkles size={18} className="text-amber-500" />
+                Необхідні навички
+              </h3>
+              <div className="flex flex-col gap-3">
+                {skills && skills.length > 0 ? (
+                  skills.map((skill: string, idx: number) => (
+                    <div key={idx} className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100 group hover:border-amber-200 transition-colors">
+                      <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]" />
+                      <span className="text-sm font-bold text-slate-700">{skill}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-400 italic">Навички не вказані</p>
+                )}
+              </div>
+            </div>
+
+            {/* БЛОК ТЕГІВ (Tags) - якщо хочете залишити їх і справа теж */}
             <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100">
               <h3 className="font-black text-slate-900 mb-6 flex items-center gap-2">
                 <Globe size={18} className="text-[#166434]" />
-                Навички
+                Категорії (Tags)
               </h3>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag: string, idx: number) => (
                   <span
                     key={idx}
-                    className="bg-slate-50 text-slate-600 px-4 py-2 rounded-xl text-xs font-bold border border-slate-100 hover:border-emerald-200 hover:text-emerald-700 transition-all cursor-default"
+                    className="bg-slate-50 text-slate-500 px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-tight border border-slate-100"
                   >
                     #{tag}
                   </span>
@@ -268,7 +329,10 @@ function Page() {
               </div>
             </div>
 
-            <button className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-emerald-600 transition-colors font-bold text-sm">
+            <button
+              onClick={handleShare} // Додаємо обробник події
+              className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-emerald-600 transition-colors font-bold text-sm"
+            >
               <Share2 size={16} /> Поділитися з друзями
             </button>
           </div>

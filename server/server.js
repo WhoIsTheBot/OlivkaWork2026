@@ -28,11 +28,16 @@ const config = {
   session: {
     absoluteDuration: 30 * 24 * 60 * 60 * 1000,
     cookie: {
-      secure: true, // Завжди true для Render (HTTPS)
-      // ВАЖЛИВО: "None" дозволяє передавати куки між різними доменами (Vercel -> Render)
+      secure: true,
       sameSite: "None", 
     },
   },
+
+  // session: {
+  //   cookie: {
+  //     secure: false,
+  //   },
+  // },
 };
 
 const PORT = process.env.PORT || 8000;
@@ -40,6 +45,7 @@ const PORT = process.env.PORT || 8000;
 // --- Middleware ---
 app.use(
   cors({
+
     origin: "https://olivka-work2026.vercel.app", 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],

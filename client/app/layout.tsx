@@ -8,6 +8,13 @@ const roboto = Roboto({
   weight: ["400", "500", "700", "900"],
 });
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "OliveWork",
+  description: "Забезпечує найкращі умови для роботи та розвитку кожного співробітника",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -16,6 +23,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Або якщо це PNG */}
+        <link rel="icon" href="/logo-main.png" type="image/png" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
